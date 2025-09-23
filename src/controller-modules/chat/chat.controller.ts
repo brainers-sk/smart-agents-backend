@@ -15,6 +15,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import {
+  AddOrRemoveTagDto,
   GetChatSessionMessagesDto,
   GetChatSessionsDto,
   GetChatSessionsQueryDto,
@@ -124,9 +125,9 @@ export class ChatController {
   @Post('session/:sessionUuid/add-tag')
   async addTagToSession(
     @Param('sessionUuid') sessionUuid: string,
-    @Body('tag') tag: string,
+    @Body() data: AddOrRemoveTagDto,
   ): Promise<DefaultResponseDto> {
-    return this.chatService.addTagToSession(sessionUuid, tag)
+    return this.chatService.addTagToSession(sessionUuid, data.tag)
   }
 
   @ApiOperation({
@@ -143,8 +144,8 @@ export class ChatController {
   @Post('session/:sessionUuid/remove-tag')
   async removeTagFromSession(
     @Param('sessionUuid') sessionUuid: string,
-    @Body('tag') tag: string,
+    @Body() data: AddOrRemoveTagDto,
   ): Promise<DefaultResponseDto> {
-    return this.chatService.removeTagFromSession(sessionUuid, tag)
+    return this.chatService.removeTagFromSession(sessionUuid, data.tag)
   }
 }

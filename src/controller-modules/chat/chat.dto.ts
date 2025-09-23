@@ -143,3 +143,11 @@ export class GetChatSessionsDto {
   items: GetChatSessionDto[]
   pagination: ResponseGetItemsPaginationDto
 }
+
+export class AddOrRemoveTagDto {
+  @ApiProperty({
+    description: 'name of tag',
+    example: 'test',
+  })
+  tag: string
+}
