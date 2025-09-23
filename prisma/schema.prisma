@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Chatbot {
+  id                  Int           @id @default(autoincrement())
+  uuid                String        @unique() @default(uuid()) @db.Uuid
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @default(now()) @updatedAt
+  createdBy           String
+  updatedBy           String
+  name                String
+  description         String?
+  instructions        String        @default("") // System prompt / agent instructions
+  allowCustomerRating Boolean       @default(false)
+  themeCss            String? // Custom CSS applied to widget
+  buttonLabel         String? // Text for launcher button
+  buttonStyleCss      String? // Optional CSS for button only
+  temperature         Float         @default(0.2)
+  model               String        @default("gpt-4o-mini")
+  allowedDomains      String[]
+  chatbotFiles        ChatbotFile[]
+  chatSessions        ChatSession[]
+}
+
+model ChatbotFile {
+  id        Int      @id @default(autoincrement())
+  uuid      String   @unique() @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  createdBy String
+  updatedBy String
+
+  filename  String
+  mimeType  String
+  path      String
+  chatbotId Int
+  chatbot   Chatbot @relation(fields: [chatbotId], references: [id])
+
+  @@index([chatbotId])
+}
+
+model ChatSession {
+  id               Int      @id @default(autoincrement())
+  uuid             String   @unique() @default(uuid()) @db.Uuid
+  createdAt        DateTime @default(now())
+  customerRating   Int? //number of starts 0 - 5
+  customerFeedback String?
+  adminRating      Int? //number of starts 0 - 5
+  adminTag         String[]
+
+  chatbotId    Int
+  chatbot      Chatbot       @relation(fields: [chatbotId], references: [id])
+  chatMessages ChatMessage[]
+}
+
+model ChatMessage {
+  id        Int             @id @default(autoincrement())
+  uuid      String          @unique() @default(uuid()) @db.Uuid
+  createdAt DateTime        @default(now())
+  content   String // message
+  role      ChatMessageRole
+
+  chatSession   ChatSession @relation(fields: [chatSessionId], references: [id])
+  chatSessionId Int
+
+  @@index([chatSessionId])
+}
+
+enum ChatMessageRole {
+  user
+  assistant
+  system
+}
