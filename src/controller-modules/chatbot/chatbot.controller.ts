@@ -21,6 +21,7 @@ import {
   GetChatbotDto,
   GetChatbotParamDto,
   GetChatbotsDto,
+  GetChatbotStatsDto,
   GetChatbotWithTagsDto,
   UpdateChatbotDto,
 } from './chatbot.dto'
@@ -119,5 +120,22 @@ export class ChatbotController {
   ): Promise<GetChatbotDto> {
     const chatbot = await this.chatbotService.deleteChatbot(params.chatbotUuid)
     return chatbot
+  }
+
+  @ApiOperation({
+    summary: 'Return chatbot statistics',
+    description: 'Aggregated statistics for each chatbot with pagination',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'List of chatbots with statistics',
+    type: GetChatbotStatsDto,
+  })
+  @Get('stats/list')
+  async getChatbotStats(
+    @Query() query: RequestGetItemsDto,
+  ): Promise<GetChatbotStatsDto> {
+    const stats = await this.chatbotService.getChatbotStats(query)
+    return stats
   }
 }

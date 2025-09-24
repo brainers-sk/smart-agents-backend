@@ -79,7 +79,6 @@ export class ChatbotService {
   }
 
   private async getChatbotTags(chatbotUuid: string): Promise<string[]> {
-    console.log('TUUUUUUUUUUUUUU', chatbotUuid)
     const tags = await this.prismaService.$queryRaw<
       { tag: string }[]
     >`SELECT DISTINCT unnest("adminTag") as tag
@@ -89,5 +88,63 @@ export class ChatbotService {
 
     const uniqueTags = tags.map((t) => t.tag)
     return uniqueTags
+  }
+
+  async getChatbotStats(query: RequestGetItemsDto) {
+    const { prismaQuery, pages } = prismaQueryTransformation(query)
+
+    const items = await this.prismaService.$queryRaw<
+      {
+        uuid: string
+        name: string
+        conversationCount: number
+        lastConversationAt: Date | null
+        averageCustomerRating: number | null
+        totalMessages: number
+        messagesPerConversation: number
+      }[]
+    >`
+     SELECT 
+        c.uuid,
+        c.name,
+        COALESCE(stats."conversationCount", 0) AS "conversationCount",
+        stats."lastConversationAt",
+        stats."averageCustomerRating",
+        COALESCE(stats."totalMessages", 0) AS "totalMessages",
+        CASE 
+          WHEN stats."totalMessages" = 0 THEN 0
+          ELSE ROUND(stats."conversationCount" / stats."totalMessages"::numeric , 2)
+        END AS "messagesPerConversation"
+      FROM "Chatbot" c
+      LEFT JOIN (
+        SELECT 
+          s."chatbotId",
+          COUNT(s.id)::int AS "conversationCount",
+          MAX(s."createdAt") AS "lastConversationAt",
+          ROUND(AVG(s."customerRating")::numeric, 1)::float AS "averageCustomerRating",
+          COALESCE(SUM(sub."messageCount"), 0)::int AS "totalMessages"
+        FROM "ChatSession" s
+        LEFT JOIN (
+          SELECT m."chatSessionId", COUNT(m.id) AS "messageCount"
+          FROM "ChatMessage" m
+          GROUP BY m."chatSessionId"
+        ) sub ON sub."chatSessionId" = s.id
+        GROUP BY s."chatbotId"
+      ) stats ON stats."chatbotId" = c.id
+      ORDER BY c."createdAt" DESC
+      LIMIT ${pages.pagination} OFFSET ${(pages.currentPage - 1) * pages.pagination};
+    `
+
+    const totalItems = await this.prismaService.chatbot.count(prismaQuery)
+    const totalPages = Math.ceil(totalItems / pages.pagination)
+
+    return {
+      items,
+      pagination: {
+        ...pages,
+        totalItems,
+        totalPages,
+      },
+    }
   }
 }

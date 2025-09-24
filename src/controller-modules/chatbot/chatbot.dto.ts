@@ -165,3 +165,34 @@ export class GetChatbotsDto {
   })
   pagination: ResponseGetItemsPaginationDto
 }
+
+export class GetChatbotStatsItemDto {
+  @ApiProperty()
+  uuid: string
+
+  @ApiProperty()
+  name: string
+
+  @ApiProperty()
+  conversationCount: number
+
+  @ApiProperty({ type: String, format: 'date-time', required: false })
+  lastConversationAt: Date | null
+
+  @ApiProperty()
+  averageCustomerRating: number | null
+
+  @ApiProperty()
+  totalMessages: number
+
+  @ApiProperty()
+  messagesPerConversation: number
+}
+
+export class GetChatbotStatsDto {
+  @ApiProperty({ type: GetChatbotStatsItemDto, isArray: true })
+  items: GetChatbotStatsItemDto[]
+
+  @ApiProperty({ type: ResponseGetItemsPaginationDto })
+  pagination: ResponseGetItemsPaginationDto
+}
