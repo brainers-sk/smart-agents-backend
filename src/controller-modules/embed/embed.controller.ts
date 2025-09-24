@@ -1,8 +1,9 @@
 import { Controller, Get, Param, Res, UseGuards } from '@nestjs/common'
 import { Response } from 'express'
 import { ChatbotOriginGuard } from 'src/utility-modules/auth/chatbot-origin.guard'
-import { EmbedService } from './embed.service'
 import { ThrottlerGuard, Throttle } from '@nestjs/throttler'
+
+import { EmbedService } from './embed.service'
 
 @Controller('embed')
 export class EmbedController {

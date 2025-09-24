@@ -1,11 +1,9 @@
 import { ValidationPipe } from '@nestjs/common'
 import { NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
-
-import { AppModule } from './app.module'
 import { Logger } from 'nestjs-pino'
 
-import { NextFunction, Request, Response } from 'express'
+import { AppModule } from './app.module'
 
 async function bootstrap(): Promise<void> {
   const port = process.env.PORT || 3000
@@ -59,5 +57,4 @@ async function bootstrap(): Promise<void> {
   console.info(`Nest is running on port: ${port}`)
 }
 
-// eslint-disable-next-line @typescript-eslint/no-floating-promises, unicorn/prefer-top-level-await
-bootstrap()
+void bootstrap()

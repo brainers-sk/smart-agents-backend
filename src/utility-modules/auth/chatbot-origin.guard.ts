@@ -1,3 +1,5 @@
+import { URL } from 'url'
+
 import {
   CanActivate,
   ExecutionContext,
@@ -6,10 +8,8 @@ import {
   Logger,
 } from '@nestjs/common'
 import { Request } from 'express'
-import { URL } from 'url'
-import { PrismaService } from '../prisma/prisma.service'
 
-type DomainPattern = string
+import { PrismaService } from '../prisma/prisma.service'
 
 @Injectable()
 export class ChatbotOriginGuard implements CanActivate {
@@ -35,8 +35,8 @@ export class ChatbotOriginGuard implements CanActivate {
       throw new ForbiddenException('Chatbot not found')
     }
 
-    const originHeader = req.headers['origin'] as string | undefined
-    const referer = req.headers['referer'] as string | undefined
+    const originHeader = req.headers['origin']
+    const referer = req.headers['referer']
     const source = originHeader ?? referer
     if (!source) {
       this.logger.warn('No Origin/Referer header present')
@@ -47,7 +47,7 @@ export class ChatbotOriginGuard implements CanActivate {
     try {
       hostname = new URL(source).hostname.toLowerCase()
     } catch (err) {
-      this.logger.warn(`Invalid origin/referer: ${source}`)
+      this.logger.warn(`Invalid origin/referer: ${source}`, err)
       throw new ForbiddenException('Forbidden')
     }
 

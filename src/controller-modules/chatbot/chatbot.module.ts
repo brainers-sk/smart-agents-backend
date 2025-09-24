@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { PrismaModule } from 'src/utility-modules/prisma/prisma.module'
+
 import { ChatbotController } from './chatbot.controller'
 import { ChatbotService } from './chatbot.service'
 

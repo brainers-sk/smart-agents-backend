@@ -1,16 +1,19 @@
 import { Injectable } from '@nestjs/common'
 import { ThrottlerGuard, ThrottlerRequest } from '@nestjs/throttler'
+import { Request } from 'express'
 
 @Injectable()
 export class CustomThrottlerGuard extends ThrottlerGuard {
-  protected async getTracker(req: Record<string, any>): Promise<string> {
-    return req.ip // IP ako identifikátor
+  // eslint-disable-next-line @typescript-eslint/require-await
+  protected async getTracker(req: Request): Promise<string> {
+    return req.ip ?? ''
   }
 
   protected async handleRequest(
     requestProps: ThrottlerRequest,
   ): Promise<boolean> {
-    const ip = requestProps.context.switchToHttp().getRequest().ip || ''
+    const req = requestProps.context.switchToHttp().getRequest<Request>()
+    const ip = req.ip ?? ''
 
     // ✅ povolené IP rozsahy (bez limitu)
     if (
@@ -22,7 +25,7 @@ export class CustomThrottlerGuard extends ThrottlerGuard {
       return true
     }
 
-    // 🔁 fallback na defaultnú logiku
+    // 🔁 fallback on default logic
     return super.handleRequest(requestProps)
   }
 }

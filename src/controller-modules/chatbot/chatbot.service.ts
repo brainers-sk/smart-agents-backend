@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from 'src/utility-modules/prisma/prisma.service'
 import { RequestGetItemsDto } from 'src/utils/dtos/global.dto'
+import { prismaQueryTransformation } from 'src/utils/data-manipulations/prisma'
+
 import {
   CreateChatbotDto,
   GetChatbotsDto,
   UpdateChatbotDto,
 } from './chatbot.dto'
-import { prismaQueryTransformation } from 'src/utils/data-manipulations/prisma'
 
 @Injectable()
 export class ChatbotService {

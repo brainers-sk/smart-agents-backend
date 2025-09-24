@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
+import { PrismaModule } from 'src/utility-modules/prisma/prisma.module'
+import { ThrottlerModule } from 'src/utility-modules/throttler/throttler.module'
 
 import { EmbedController } from './embed.controller'
-import { PrismaModule } from 'src/utility-modules/prisma/prisma.module'
 import { EmbedService } from './embed.service'
-import { ThrottlerModule } from 'src/utility-modules/throttler/throttler.module'
 
 @Module({
   imports: [PrismaModule, ThrottlerModule],

@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common'
-import { DefaultService } from './default.service'
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger'
-import { GetChatbotDto } from '../chatbot/chatbot.dto'
+
+import { DefaultService } from './default.service'
 import { GetHealthCheckDto } from './default.dto'
 
 @Controller()

@@ -7,9 +7,10 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { WidgetService } from './widget.service'
 import { ChatbotOriginGuard } from 'src/utility-modules/auth/chatbot-origin.guard'
 import { ThrottlerGuard, Throttle } from '@nestjs/throttler'
+
+import { WidgetService } from './widget.service'
 
 @Controller('widget')
 @ApiTags('widget')

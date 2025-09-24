@@ -3,6 +3,8 @@ import { PassportStrategy } from '@nestjs/passport'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import * as jwksRsa from 'jwks-rsa'
 
+import { AzureADJwtPayloadDto } from './auth.dto'
+
 @Injectable()
 export class AzureADStrategy extends PassportStrategy(Strategy, 'azure-ad') {
   constructor() {
@@ -21,7 +23,7 @@ export class AzureADStrategy extends PassportStrategy(Strategy, 'azure-ad') {
     })
   }
 
-  async validate(payload: any) {
+  validate(payload: AzureADJwtPayloadDto) {
     if (!payload) {
       throw new UnauthorizedException('Invalid token')
     }

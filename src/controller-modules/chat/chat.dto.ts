@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { ChatMessageRole } from '@prisma/client'
-import { Transform, Type } from 'class-transformer'
+import { Transform } from 'class-transformer'
 import {
   IsArray,
   IsInt,
@@ -94,7 +94,9 @@ export class GetChatSessionsQueryDto extends RequestGetItemsDto {
   })
   @IsOptional()
   @IsArray()
-  @Transform(({ value }) => (Array.isArray(value) ? value : [value]))
+  @Transform(({ value }) =>
+    Array.isArray(value) ? (value as string[]) : [String(value)],
+  )
   adminTag?: string[]
 
   @ApiPropertyOptional({

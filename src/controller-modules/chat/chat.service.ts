@@ -1,5 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from 'src/utility-modules/prisma/prisma.service'
+import { OpenAiService } from 'src/utility-modules/openai/openai.service'
+import { DefaultResponseEnum } from 'src/utils/dtos/global.dto'
+import { prismaQueryTransformation } from 'src/utils/data-manipulations/prisma'
+
 import {
   GetChatSessionMessagesDto,
   GetChatSessionsDto,
@@ -7,9 +11,6 @@ import {
   SendCustomerRatingDto,
   SendMessageDto,
 } from './chat.dto'
-import { OpenAiService } from 'src/utility-modules/openai/openai.service'
-import { DefaultResponseEnum } from 'src/utils/dtos/global.dto'
-import { prismaQueryTransformation } from 'src/utils/data-manipulations/prisma'
 
 @Injectable()
 export class ChatService {
@@ -53,7 +54,10 @@ export class ChatService {
     const reply = await this.ai.chat(
       bot.model,
       bot.instructions,
-      history.map((m) => ({ role: m.role as any, content: m.content })),
+      history.map((m) => ({
+        role: m.role,
+        content: m.content,
+      })),
       bot.temperature,
     )
 
@@ -177,14 +181,7 @@ export class ChatService {
   }
 
   async addTagToSession(sessionUuid: string, tag: string) {
-    const session = await this.prismaService.chatSession.findUnique({
-      where: { uuid: sessionUuid },
-    })
-    if (!session) {
-      throw new NotFoundException('Session not found')
-    }
-
-    const updated = await this.prismaService.chatSession.update({
+    const session = await this.prismaService.chatSession.update({
       where: { uuid: sessionUuid },
       data: {
         adminTag: {
@@ -192,6 +189,10 @@ export class ChatService {
         },
       },
     })
+
+    if (!session) {
+      throw new NotFoundException('Session not found')
+    }
 
     return {
       message: `Tag "${tag}" added`,

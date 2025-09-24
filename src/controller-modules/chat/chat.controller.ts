@@ -7,13 +7,17 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common'
-import { ChatService } from './chat.service'
 import {
   ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
+import { ChatbotOriginGuard } from 'src/utility-modules/auth/chatbot-origin.guard'
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler'
+import { DefaultResponseDto } from 'src/utils/dtos/global.dto'
+import { AuthGuard } from '@nestjs/passport'
+
 import {
   AddOrRemoveTagDto,
   GetChatSessionMessagesDto,
@@ -23,10 +27,7 @@ import {
   SendMessageDto,
   SendMessageReplyDto,
 } from './chat.dto'
-import { ChatbotOriginGuard } from 'src/utility-modules/auth/chatbot-origin.guard'
-import { Throttle, ThrottlerGuard } from '@nestjs/throttler'
-import { DefaultResponseDto } from 'src/utils/dtos/global.dto'
-import { AuthGuard } from '@nestjs/passport'
+import { ChatService } from './chat.service'
 
 @Controller('chat')
 @ApiTags('chat')

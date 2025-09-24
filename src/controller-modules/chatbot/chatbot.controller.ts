@@ -15,6 +15,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger'
+import { RequestGetItemsDto } from 'src/utils/dtos/global.dto'
+import { AuthGuard } from '@nestjs/passport'
+
 import { ChatbotService } from './chatbot.service'
 import {
   CreateChatbotDto,
@@ -25,8 +28,6 @@ import {
   GetChatbotWithTagsDto,
   UpdateChatbotDto,
 } from './chatbot.dto'
-import { RequestGetItemsDto } from 'src/utils/dtos/global.dto'
-import { AuthGuard } from '@nestjs/passport'
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('azure-ad'))

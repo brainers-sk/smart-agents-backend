@@ -1,5 +1,13 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+export interface MigrationRowDto {
+  migration_name: string
+}
+
+export interface PackageJsonDto {
+  version?: string
+}
+
 export class GetHealthCheckDto {
   @ApiProperty({
     description: 'Is app live?',

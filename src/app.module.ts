@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+
 import { AppService } from './app.service'
 import { LoggerModule } from './utility-modules/logger/logger.module'
 import { DefaultModule } from './controller-modules/default/default.module'

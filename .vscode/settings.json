@@ -1,28 +1,23 @@
 {
-    "editor.quickSuggestions": {
-      "other": "on",
-      "comments": true,
-      "strings": "off"
-    },
-    "eslint.enable": true,
-    "eslint.nodePath": "./node_modules",
-    "eslint.workingDirectories": [
-    {
-      "mode": "auto"
-    }
-    ],
-    "eslint.validate": [
-      "javascript",
-      "javascriptreact",
-      "typescript",
-      "typescriptreact"
-    ],
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit"
-    },
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "cSpell.words": [
-      "autoincrement",
-      "Chatbots"
-    ]
+  "editor.quickSuggestions": {
+    "other": "on",
+    "comments": true,
+    "strings": "off"
+  },
+  "eslint.enable": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.lintTask.enable": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "cSpell.words": [
+    "autoincrement",
+    "Chatbots"
+  ]
 }
