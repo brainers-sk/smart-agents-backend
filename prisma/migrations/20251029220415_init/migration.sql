@@ -1,6 +1,9 @@
 -- CreateEnum
 CREATE TYPE "ChatMessageRole" AS ENUM ('user', 'assistant', 'system');
 
+-- CreateEnum
+CREATE TYPE "ServiceEnum" AS ENUM ('openai', 'copilot');
+
 -- CreateTable
 CREATE TABLE "Chatbot" (
     "id" SERIAL NOT NULL,
@@ -12,27 +15,16 @@ CREATE TABLE "Chatbot" (
     "name" TEXT NOT NULL,
     "description" TEXT,
     "instructions" TEXT NOT NULL DEFAULT '',
+    "allowCustomerRating" BOOLEAN NOT NULL DEFAULT false,
     "themeCss" TEXT,
     "buttonLabel" TEXT,
     "buttonStyleCss" TEXT,
     "temperature" DOUBLE PRECISION NOT NULL DEFAULT 0.2,
+    "service" "ServiceEnum" NOT NULL DEFAULT 'openai',
     "model" TEXT NOT NULL DEFAULT 'gpt-4o-mini',
+    "allowedDomains" TEXT[],
 
     CONSTRAINT "Chatbot_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "ChatbotDomain" (
-    "id" SERIAL NOT NULL,
-    "uuid" UUID NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "createdBy" TEXT NOT NULL,
-    "updatedBy" TEXT NOT NULL,
-    "url" TEXT NOT NULL,
-    "chatbotId" INTEGER NOT NULL,
-
-    CONSTRAINT "ChatbotDomain_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -56,6 +48,10 @@ CREATE TABLE "ChatSession" (
     "id" SERIAL NOT NULL,
     "uuid" UUID NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "customerRating" INTEGER,
+    "customerFeedback" TEXT,
+    "adminRating" INTEGER,
+    "adminTag" TEXT[],
     "chatbotId" INTEGER NOT NULL,
 
     CONSTRAINT "ChatSession_pkey" PRIMARY KEY ("id")
@@ -63,7 +59,7 @@ CREATE TABLE "ChatSession" (
 
 -- CreateTable
 CREATE TABLE "ChatMessage" (
-    "id" TEXT NOT NULL,
+    "id" SERIAL NOT NULL,
     "uuid" UUID NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "content" TEXT NOT NULL,
@@ -75,12 +71,6 @@ CREATE TABLE "ChatMessage" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Chatbot_uuid_key" ON "Chatbot"("uuid");
-
--- CreateIndex
-CREATE UNIQUE INDEX "ChatbotDomain_uuid_key" ON "ChatbotDomain"("uuid");
-
--- CreateIndex
-CREATE INDEX "ChatbotDomain_chatbotId_idx" ON "ChatbotDomain"("chatbotId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "ChatbotFile_uuid_key" ON "ChatbotFile"("uuid");
@@ -96,9 +86,6 @@ CREATE UNIQUE INDEX "ChatMessage_uuid_key" ON "ChatMessage"("uuid");
 
 -- CreateIndex
 CREATE INDEX "ChatMessage_chatSessionId_idx" ON "ChatMessage"("chatSessionId");
-
--- AddForeignKey
-ALTER TABLE "ChatbotDomain" ADD CONSTRAINT "ChatbotDomain_chatbotId_fkey" FOREIGN KEY ("chatbotId") REFERENCES "Chatbot"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ChatbotFile" ADD CONSTRAINT "ChatbotFile_chatbotId_fkey" FOREIGN KEY ("chatbotId") REFERENCES "Chatbot"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

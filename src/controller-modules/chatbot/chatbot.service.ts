@@ -53,6 +53,7 @@ export class ChatbotService {
   }
 
   async updateChatbot(chatbotUuid: string, data: UpdateChatbotDto) {
+    console.log('tuuu', data)
     const chatbot = await this.prismaService.chatbot.update({
       where: {
         uuid: chatbotUuid,

@@ -28,6 +28,7 @@ model Chatbot {
   buttonLabel         String? // Text for launcher button
   buttonStyleCss      String? // Optional CSS for button only
   temperature         Float         @default(0.2)
+  service             ServiceEnum   @default(openai)
   model               String        @default("gpt-4o-mini")
   allowedDomains      String[]
   chatbotFiles        ChatbotFile[]
@@ -82,4 +83,9 @@ enum ChatMessageRole {
   user
   assistant
   system
+}
+
+enum ServiceEnum {
+  openai
+  copilot
 }

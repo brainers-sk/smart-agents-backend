@@ -5,6 +5,7 @@ import {
   OmitType,
   PartialType,
 } from '@nestjs/swagger'
+import { ServiceEnum } from '@prisma/client'
 import {
   IsString,
   IsOptional,
@@ -33,6 +34,7 @@ export enum ChatbotModelEnum {
   O4_MINI = 'o4-mini',
   GPT_4O = 'gpt-4o',
   GPT_40_REALTIME_PREVIEW = 'gpt-4o-realtime-preview',
+  COPILOT = 'copilot',
 }
 
 export class CreateChatbotDto {
@@ -53,6 +55,14 @@ export class CreateChatbotDto {
   })
   @IsString()
   instructions?: string
+
+  @ApiPropertyOptional({
+    description: 'Service type if openai or copilot',
+    enumName: 'ServiceEnum',
+    enum: ServiceEnum,
+  })
+  @IsEnum(ServiceEnum)
+  service?: ServiceEnum
 
   @ApiPropertyOptional({
     description: 'Temperature setting for chatbot responses',
@@ -84,6 +94,14 @@ export class UpdateChatbotDto extends PartialType(CreateChatbotDto) {
   })
   @IsString()
   instructions?: string
+
+  @ApiPropertyOptional({
+    description: 'Service type if openai or copilot',
+    enumName: 'ServiceEnum',
+    enum: ServiceEnum,
+  })
+  @IsEnum(ServiceEnum)
+  service?: ServiceEnum
 
   @ApiPropertyOptional({
     description: 'CSS for the chatbot theme',
@@ -122,7 +140,6 @@ export class UpdateChatbotDto extends PartialType(CreateChatbotDto) {
   @ApiPropertyOptional({
     description: 'Allowed domains for chatbot',
     example: 'http://localhost:3000',
-    isArray: true,
     required: false,
   })
   @IsOptional()

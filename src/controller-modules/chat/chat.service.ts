@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from 'src/utility-modules/prisma/prisma.service'
-import { OpenAiService } from 'src/utility-modules/openai/openai.service'
+import { OpenAiService } from 'src/utility-modules/ai/openai.service'
 import { DefaultResponseEnum } from 'src/utils/dtos/global.dto'
 import { prismaQueryTransformation } from 'src/utils/data-manipulations/prisma'
 
@@ -11,12 +11,15 @@ import {
   SendCustomerRatingDto,
   SendMessageDto,
 } from './chat.dto'
+import { MsCopilotService } from 'src/utility-modules/ai/ms-copilot.service'
+import { ServiceEnum } from '@prisma/client'
 
 @Injectable()
 export class ChatService {
   constructor(
     private prismaService: PrismaService,
-    private ai: OpenAiService,
+    private openAiService: OpenAiService,
+    private msCopilotService: MsCopilotService,
   ) {}
 
   async send(chatbotUuid: string, data: SendMessageDto) {
@@ -50,16 +53,26 @@ export class ChatService {
       orderBy: { createdAt: 'asc' },
     })
 
-    // Ask OpenAI
-    const reply = await this.ai.chat(
-      bot.model,
-      bot.instructions,
-      history.map((m) => ({
-        role: m.role,
-        content: m.content,
-      })),
-      bot.temperature,
-    )
+    let reply: string
+    if (bot.service === ServiceEnum.openai) {
+      reply = await this.openAiService.chat(
+        bot.model,
+        bot.instructions,
+        history.map((m) => ({
+          role: m.role,
+          content: m.content,
+        })),
+        bot.temperature,
+      )
+    } else {
+      reply = await this.msCopilotService.chat(
+        bot.instructions,
+        history.map((m) => ({
+          role: m.role,
+          content: m.content,
+        })),
+      )
+    }
 
     // Store AI reply
     await this.prismaService.chatMessage.create({
